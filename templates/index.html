@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask and Dash Integration</title>
+</head>
+<body>
+    <!-- Placeholder for Dash app -->
+    <div id="dash-container"></div>
+
+    <!-- Include Dash dependencies (css) -->
+    {{ dash_deps | safe }}
+    
+    <!-- Include Dash app script (js) -->
+    {{ dash_script | safe }}
+</body>
+</html>
