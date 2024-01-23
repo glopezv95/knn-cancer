@@ -1,1 +1,3 @@
-This is a dash app that allows the user to analyze and visualize breast tumor related variables, both for common and worse and more perilous tumors. It also includes a machine learning model to predict the diagnosis based on certain features.
+This is a dash app that allows the user to analyze and visualize breast tumor related variables, both for 'normal' and 'worst' types of tumors.
+Through bootstraping, statistical t-tests of distributions of 'normal' and 'worst' type of tumors are dinamically generated for the variable selected.
+It also includes a machine learning model that allows the user to predict a specific case's diagnosis based on a certain selection of tumor-related features.
