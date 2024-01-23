@@ -1,1 +1,1 @@
-Descriptive Analysis of breast tumors variables and machine learning model to predict and classify diagnosis.
+This is a dash app that allows the user to analyze and visualize breast tumor related variables, both for common and worse and more perilous tumors. It also includes a machine learning model to predict the diagnosis based on certain features.
