@@ -24,6 +24,22 @@ def generate_hist(df: pd.DataFrame, x: str):
     
     return fig
 
+def bootstrap_means_dist(data: pd.DataFrame, iterations:int, contrast_column: str, filter: str):
+    
+    np.random.seed(17)
+    bootstrap_means_dict = {_:np.zeros(iterations) for _ in data[contrast_column].unique()}
+    
+    for condition in data[contrast_column].unique():
+        for i in range(iterations):
+            bootstrap_dist = np.random.choice(
+                data[data[contrast_column] == condition][filter],
+                size = len(data),
+                replace = True)
+            
+            bootstrap_means_dict[condition][i] = np.mean(bootstrap_dist)
+            
+    return bootstrap_means_dict
+
 def test_knn(dataframe: pd.DataFrame, drop_columns: list, y: str, n_columns: int, max_k):
     best_dict = {}
     feature_columns = dataframe.columns.drop(drop_columns)

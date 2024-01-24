@@ -3,24 +3,8 @@ from dash import Input, Output, html
 import numpy as np
 from scipy import stats
 
-from functions import generate_hist
+from functions import generate_hist, bootstrap_means_dist
 from data import df
-
-def bootstrap_means_dist(data: pd.DataFrame, iterations:int, contrast_column: str, filter: str):
-    
-    np.random.seed(17)
-    bootstrap_means_dict = {_:np.zeros(iterations) for _ in data[contrast_column].unique()}
-    
-    for condition in data[contrast_column].unique():
-        for i in range(iterations):
-            bootstrap_dist = np.random.choice(
-                data[data[contrast_column] == condition][filter],
-                size = len(data),
-                replace = True)
-            
-            bootstrap_means_dict[condition][i] = np.mean(bootstrap_dist)
-            
-    return bootstrap_means_dict
 
 def generate_callbacks(application):
     @application.callback(
