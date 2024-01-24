@@ -1,74 +1,156 @@
+import pandas as pd
 from dash import Input, Output, html
 import numpy as np
 from scipy import stats
 
-from graphs import generate_hist
+from functions import generate_hist
 from data import df
+
+def bootstrap_means_dist(data: pd.DataFrame, iterations:int, contrast_column: str, filter: str):
+    
+    np.random.seed(17)
+    bootstrap_means_dict = {_:np.zeros(iterations) for _ in data[contrast_column].unique()}
+    
+    for condition in data[contrast_column].unique():
+        for i in range(iterations):
+            bootstrap_dist = np.random.choice(
+                data[data[contrast_column] == condition][filter],
+                size = len(data),
+                replace = True)
+            
+            bootstrap_means_dict[condition][i] = np.mean(bootstrap_dist)
+            
+    return bootstrap_means_dict
 
 def generate_callbacks(application):
     @application.callback(
-    [Output('hist_graph', 'figure'),
-     Output('hist_title', 'children'),
-     Output('t_test_p', 'children')],
+    [Output('hist_title', 'children'),
+     Output('hist_graph', 'figure'),
+     Output('levene_p', 'children'),
+     Output('ttest_p', 'children')],
     Input('hist_dd', 'value'))
 
-    def upgrade_hist(a):
+    def test_distribution(a):
+        aa = 'radius'
+                
         if a:
-            if a == 'Fractal Dimension':
-                aa = a.lower().replace(' ', '_')
-                
+            aa = a.lower().replace(' ', '_')
+              
+        title = f'{aa.title().replace("_", " ")} distribution (normal/worst case scenarios)'
+        fig = generate_hist(df = df, x = aa)
+        
+        bts_normal = bootstrap_means_dist(df, 1000, 'type', aa)['normal']
+        bts_worst = bootstrap_means_dist(df, 1000, 'type', aa)['worst']
+            
+        levene_statistic, levene_pvalue = stats.levene(bts_normal, bts_worst)
+            
+        if levene_pvalue < .05:
+            levene_p = [html.Strong(id = 'p_levene_positive',
+                                    children = 'Null Hypothesis Rejected'),
+                          html.Br(),
+                          f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
+                          html.P("have significantly different variance"),
+                          html.Br(),
+                          f'Statistic value: {levene_statistic}',
+                          html.Br(),
+                          f'p-value: {levene_pvalue}']
+            
+            ttest_statistic, ttest_pvalue = stats.ttest_ind(bts_normal, bts_worst,
+                                                            equal_var = False)
+            
+            if ttest_pvalue < .05:
+                ttest_p = [html.Strong(id = 'p_ttest_positive',
+                                       children = 'Null Hypothesis Rejected'),
+                           html.Br(),
+                           f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
+                           html.P("have significantly different means"),
+                           html.Br(),
+                           f'Statistic value: {ttest_statistic}',
+                           html.Br(),
+                           f'p-value: {ttest_pvalue}']
+            
             else:
-                aa = a.lower()
-                
-            fig = generate_hist(df = df, x = aa)
-            
-            title = f'{a} distribution'
-            
-            num_iterations = 1000
-            bts_stat = np.zeros(num_iterations)
-            bts_worst = np.zeros(num_iterations)
-            
-            for i in range(num_iterations):
-                bts_stat_sample = np.random.choice(df[df['type'] == 'normal'][aa],
-                                                   size = len(df), replace = True)
-                bts_worst_sample = np.random.choice(df[df['type'] == 'worst'][aa],
-                                                    size = len(df), replace = True)
-                
-                bts_stat[i] = np.mean(bts_stat_sample)
-                bts_worst[i] = np.mean(bts_worst_sample)
-                
-            t_test_statistic, t_test_pvalue = stats.ttest_ind(bts_stat_sample, bts_worst_sample)
+                ttest_p = [html.Strong(id = 'p_ttest_negative',
+                                       children = 'Failed to Reject Null Hypothesis'),
+                            html.Br(),
+                            f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
+                            html.P("don't have significantly different means"),
+                            html.Br(),
+                            f'Statistic value: {ttest_statistic}',
+                            html.Br(),
+                            f'p-value: {ttest_pvalue}']
             
         else:
-            fig = generate_hist(df = df, x = 'radius')
-            title = f'Radius distribution'
+            levene_p = [html.Strong(id = 'p_levene_negative',
+                                    children = 'Failed to Reject Null Hypothesis'),
+                          html.Br(),
+                          f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
+                          html.P("don't have significantly different variance"),
+                          html.Br(),
+                          f'Statistic value: {levene_statistic}',
+                          html.Br(),
+                          f'p-value: {levene_pvalue}']
             
-            bts_stat = np.zeros(num_iterations)
-            bts_worst = np.zeros(num_iterations)
+            ttest_statistic, ttest_pvalue = stats.ttest_ind(bts_normal, bts_worst,
+                                                            equal_var = True)
             
-            for i in range(num_iterations):
-                bts_stat_sample = np.random.choice(df[df['type'] == 'normal']['radius'],
-                size = len(df), replace = True)
-                bts_worst_sample = np.random.choice(df[df['type'] == 'normal']['worst'],
-                                                    size = len(df), replace = True)
+            if ttest_pvalue < .05:
+                ttest_p = [html.Strong(id = 'p_ttest_positive',
+                                       children = 'Null Hypothesis Rejected'),
+                            html.Br(),
+                            f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
+                            html.P("have significantly different means"),
+                            html.Br(),
+                            f'Statistic value: {ttest_statistic}',
+                            html.Br(),
+                            f'p-value: {ttest_pvalue}']
+            
+            else:
+                ttest_p = [html.Strong(id = 'p_ttest_negative',
+                                       children = 'Failed to Reject Null Hypothesis'),
+                            html.Br(),
+                            f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
+                            html.P("don't have significantly different means"),
+                            html.Br(),
+                            f'Statistic value: {ttest_statistic}',
+                            html.Br(),
+                            f'p-value: {ttest_pvalue}']
+            
+        return title, fig, levene_p, ttest_p
+    
+    @application.callback(
+        Output('descriptive_p_normal', 'children'),
+        Output('descriptive_p_worst', 'children'),
+        Input('hist_dd', 'value'))
+    
+    def generate_descriptive_statistics(a):
+        aa = 'radius'
                 
-                bts_stat[i] = np.mean(bts_stat_sample)
-                bts_worst[i] = np.mean(bts_worst_sample)
-                
-            t_test_statistic, t_test_pvalue = stats.ttest_ind(bts_stat_sample, bts_worst_sample)
+        if a:
+            aa = a.lower().replace(' ', '_')
             
-        if t_test_pvalue < .05:
-            p_children = [html.Strong(id = 'p_t_test_positive', children = 'Null Hypothesis Rejected'),
-                          html.Br(),
-                          f'Statistic value: {t_test_statistic}',
-                          html.Br(),
-                          f'p-value: {t_test_pvalue}']
+        stats_dict = {}
+        for item in ['normal', 'worst']:
+            stats_dict[item]= {'mean' : np.mean(df[df['type'] == item][aa]),
+                               'std' : np.std(df[df['type'] == item][aa]),
+                               'count' : len(df[df['type'] == item][aa])}
             
-        else:
-            p_children = [html.Strong(id = 'p_t_test_negative', children = 'Failed to Reject Null Hypothesis'),
-                          html.Br(),
-                          f'Statistic value: {t_test_statistic}',
-                          html.Br(),
-                          f'p-value: {t_test_pvalue}']
-            
-        return fig, title, p_children
+        p_normal = [html.Strong(id = 'title_normal_stats',
+                        children = 'Normal cases'),
+                    html.Br(),
+                    f'Sample mean: {round(stats_dict["normal"]["mean"], 2)}',
+                    html.Br(),
+                    f'Sample standard deviation: {round(stats_dict["normal"]["std"], 2)}',
+                    html.Br(),
+                    html.P(f'Sample count: {stats_dict["normal"]["count"]}')]
+        
+        p_worst = [html.Strong(id = 'title_worst_stats',
+                        children = 'Worst cases'),
+                   html.Br(),
+                   f'Sample mean: {round(stats_dict["worst"]["mean"], 2)}',
+                   html.Br(),
+                   f'Sample standard deviation: {round(stats_dict["worst"]["std"], 2)}',
+                   html.Br(),
+                   f'Sample count: {stats_dict["worst"]["count"]}']
+        
+        return p_normal, p_worst

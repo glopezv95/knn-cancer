@@ -44,3 +44,7 @@ df_worst['type'] = 'worst'
 df_best['type'] = 'normal'
 
 df = pd.concat([df_best, df_worst], ignore_index = True)
+
+# Set up categorical data 'diagnosis' for machine learning knn model
+df.loc[df['diagnosis'] == 'M', 'diagnosis'] = 1
+df.loc[df['diagnosis'] == 'B', 'diagnosis'] = 0
