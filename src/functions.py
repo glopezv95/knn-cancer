@@ -6,8 +6,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 import matplotlib.pyplot as plt
 
-from data import df
-
 def generate_hist(df: pd.DataFrame, x: str):
     
     fig = px.histogram(
