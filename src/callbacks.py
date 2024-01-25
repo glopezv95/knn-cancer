@@ -1,10 +1,12 @@
 import pandas as pd
-from dash import Input, Output, html
+from dash import Input, Output, html, no_update
+from dash import callback_context as ctx
 import numpy as np
 from scipy import stats
 
-from functions import generate_hist, bootstrap_means_dist
+from functions import generate_hist, bootstrap_means_dist, generate_diagnosis
 from data import df
+from knn import selected_k
 
 def generate_callbacks(application):
     @application.callback(
@@ -30,11 +32,11 @@ def generate_callbacks(application):
             
         if levene_pvalue < .05:
             levene_p = [html.Strong(id = 'p_levene_positive',
-                                    children = 'Null Hypothesis Rejected'),
+                                    children = 'Null Hypothesis Rejected',
+                                    style = dict(color = '#7A3E3E')),
                           html.Br(),
                           f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
                           html.P("have significantly different variance"),
-                          html.Br(),
                           f'Statistic value: {levene_statistic}',
                           html.Br(),
                           f'p-value: {levene_pvalue}']
@@ -44,33 +46,33 @@ def generate_callbacks(application):
             
             if ttest_pvalue < .05:
                 ttest_p = [html.Strong(id = 'p_ttest_positive',
-                                       children = 'Null Hypothesis Rejected'),
+                                       children = 'Null Hypothesis Rejected',
+                                       style = dict(color = '#7A3E3E')),
                            html.Br(),
                            f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
                            html.P("have significantly different means"),
-                           html.Br(),
                            f'Statistic value: {ttest_statistic}',
                            html.Br(),
                            f'p-value: {ttest_pvalue}']
             
             else:
                 ttest_p = [html.Strong(id = 'p_ttest_negative',
-                                       children = 'Failed to Reject Null Hypothesis'),
+                                       children = 'Failed to Reject Null Hypothesis',
+                                       style = dict(color = '#47A992')),
                             html.Br(),
                             f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
                             html.P("don't have significantly different means"),
-                            html.Br(),
                             f'Statistic value: {ttest_statistic}',
                             html.Br(),
                             f'p-value: {ttest_pvalue}']
             
         else:
             levene_p = [html.Strong(id = 'p_levene_negative',
-                                    children = 'Failed to Reject Null Hypothesis'),
+                                    children = 'Failed to Reject Null Hypothesis',
+                                    style = dict(color = '#47A992')),
                           html.Br(),
                           f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
                           html.P("don't have significantly different variance"),
-                          html.Br(),
                           f'Statistic value: {levene_statistic}',
                           html.Br(),
                           f'p-value: {levene_pvalue}']
@@ -80,22 +82,22 @@ def generate_callbacks(application):
             
             if ttest_pvalue < .05:
                 ttest_p = [html.Strong(id = 'p_ttest_positive',
-                                       children = 'Null Hypothesis Rejected'),
+                                       children = 'Null Hypothesis Rejected',
+                                       style = dict(color = '#7A3E3E')),
                             html.Br(),
                             f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
                             html.P("have significantly different means"),
-                            html.Br(),
                             f'Statistic value: {ttest_statistic}',
                             html.Br(),
                             f'p-value: {ttest_pvalue}']
             
             else:
                 ttest_p = [html.Strong(id = 'p_ttest_negative',
-                                       children = 'Failed to Reject Null Hypothesis'),
+                                       children = 'Failed to Reject Null Hypothesis',
+                                       style = dict(color = '#47A992')),
                             html.Br(),
                             f"{aa.title().replace('_', ' ')} normal and worst case scenarios",
                             html.P("don't have significantly different means"),
-                            html.Br(),
                             f'Statistic value: {ttest_statistic}',
                             html.Br(),
                             f'p-value: {ttest_pvalue}']
@@ -103,8 +105,8 @@ def generate_callbacks(application):
         return title, fig, levene_p, ttest_p
     
     @application.callback(
-        Output('descriptive_p_normal', 'children'),
-        Output('descriptive_p_worst', 'children'),
+        [Output('descriptive_p_normal', 'children'),
+        Output('descriptive_p_worst', 'children')],
         Input('hist_dd', 'value'))
     
     def generate_descriptive_statistics(a):
@@ -138,3 +140,35 @@ def generate_callbacks(application):
                    f'Sample count: {stats_dict["worst"]["count"]}']
         
         return p_normal, p_worst
+    
+    @application.callback(
+        Output('diagnosis_col', 'children'),
+        [Input('perimeter_input', 'value'),
+         Input('perimeter_button', 'n_clicks')])
+    
+    def diagnose(input_val, click):
+        try:
+            diagnosis = None
+            
+            if ctx.triggered_id == 'perimeter_button' or ctx.triggered_id == 'perimeter_input':
+                x = generate_diagnosis(
+                    dataframe = df,
+                    value = input_val,
+                    X = 'perimeter',
+                    y = 'diagnosis',
+                    k = selected_k)
+                
+                if int(x[0]) == 1:
+                    diagnosis = html.Strong(id = 'diagnosis_p',
+                                            children = 'Malign tumor',
+                                            style = dict(color = '#7A3E3E'))
+                else:
+                    diagnosis = html.Strong(id = 'diagnosis_p',
+                                            children = 'Benign tumor',
+                                            style = dict(color = '#47A992'))
+                       
+            return diagnosis
+        
+        except ValueError as ve:
+            if "Input X contains NaN" in str(ve):
+                return None

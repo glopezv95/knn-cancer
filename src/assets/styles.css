@@ -1,0 +1,122 @@
+body {
+    background-color: #F5F7F8;
+}
+
+#home_div {
+    margin: 30px
+}
+
+h2 {
+    padding: 8px 0px;
+    border-bottom: #482121 2px solid;
+}
+
+#title {
+    width: 65%
+}
+
+h4 {
+    margin: 0px;
+    margin-bottom: 4px;
+    width: 100%
+}
+.row {
+    padding-right: 0px;
+}
+
+#dropdown, #model_input_row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#dropdown {
+    width:30%;
+    display: flex;
+    justify-content: right;
+}
+
+#hist_dd {
+    width: 65%;
+    display: inline-block;
+    justify-content: left;
+}
+
+#dropdown_text {
+    margin-right: 20px;
+    margin-bottom: 0px;
+}
+
+.card {
+    width: 45%;
+    background-color: #F5F7F8;
+    margin: 12px;
+    border: 0px
+}
+
+#hist_graph_card {
+    width: 60%
+}
+
+#subtitles_stats_col {
+    padding-left: 30px
+}
+
+#stats_col_test, #stats_col_descriptive {
+    width: 15%;
+}
+
+#stats_row {
+    display: flex;
+    align-items: flex-start;
+}
+
+#perimeter_input {
+    width: 20%;
+    display: inline-block;
+    text-align: center;
+}
+
+#perimeter_button {
+    width:20%;
+    height: 30px;
+    display: inline-block;
+    margin-left: 2%;
+    background-color: #47A992;
+    font-size: small;
+    font-weight: bold;
+    border: 0px;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}
+#hist_dd, #perimeter_input {
+    border: black 2px solid;
+    border-radius: 6px;
+}
+
+#model_p, #diagnosis_p {
+    padding: 28px 0px;
+    margin: 0px
+}
+
+#diagnosis_p {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+}
+
+.column-header-name, .dash-cell-value, .dash-filter {
+    font-family: 'Segoe UI';
+    font-size: small;
+}
+
+.column-header-name {
+    font-weight: bold;
+}
+
+.current-page, .last-page {
+    font-family: 'Segoe UI';
+}
