@@ -6,7 +6,7 @@ from data import variables, df
 from callbacks import generate_callbacks
 from functions import generate_knn_line
 from knn import selected_columns
-from variables import model_p
+from misc import model_p
 
 app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
 
