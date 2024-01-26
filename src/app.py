@@ -73,5 +73,7 @@ app.layout = html.Div(id = 'home_div', children = [
 
 generate_callbacks(app)
 
+server = app.server
+
 if __name__ == '__main__':
     app.run(debug = False)
