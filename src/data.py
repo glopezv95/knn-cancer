@@ -4,7 +4,7 @@ import plotly.express as px
 
 # Get path of data.csv
 abs_path = os.path.dirname(__file__)
-df_path = os.path.join(abs_path, '..\\data\\data.csv')
+df_path = os.path.join(abs_path, '../data/data.csv')
 
 # Import data.csv and apply data cleaning and classification
 df = pd.read_csv(df_path)
