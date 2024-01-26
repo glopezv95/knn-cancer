@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from functions import test_knn, generate_knn_line
+from functions import test_knn
 from data import df
 
 checklist = []

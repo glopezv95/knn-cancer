@@ -22,7 +22,7 @@ def generate_callbacks(application):
         if a:
             aa = a.lower().replace(' ', '_')
               
-        title = f'{aa.title().replace("_", " ")} distribution (normal/worst case scenarios)'
+        title = f'{aa.upper().replace("_", " ")} DISTRIBUTION (CASE SCENARIOS)'
         fig = generate_hist(df = df, x = aa)
         
         bts_normal = bootstrap_means_dist(df, 1000, 'type', aa)['normal']
@@ -160,11 +160,11 @@ def generate_callbacks(application):
                 
                 if int(x[0]) == 1:
                     diagnosis = html.Strong(id = 'diagnosis_p',
-                                            children = 'Malign tumor',
+                                            children = 'MALIGN',
                                             style = dict(color = '#7A3E3E'))
                 else:
                     diagnosis = html.Strong(id = 'diagnosis_p',
-                                            children = 'Benign tumor',
+                                            children = 'BENIGN',
                                             style = dict(color = '#47A992'))
                        
             return diagnosis

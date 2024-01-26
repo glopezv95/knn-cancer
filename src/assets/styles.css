@@ -9,6 +9,7 @@ body {
 h2 {
     padding: 8px 0px;
     border-bottom: #482121 2px solid;
+    font-weight: bold;
 }
 
 #title {
@@ -18,16 +19,28 @@ h2 {
 h4 {
     margin: 0px;
     margin-bottom: 4px;
-    width: 100%
+    width: 100%;
+    font-size: 20px;
 }
+
+h5 {
+    font-size: 16px;
+    margin-bottom: 18px;
+    margin-top: 25px;
+}
+
+h6 {
+    font-weight: bold;
+}
+
 .row {
     padding-right: 0px;
 }
 
-#dropdown, #model_input_row {
+#dropdown, #model_input_col {
     display: flex;
     align-items: center;
-    justify-content: center;
+    text-align: center;
 }
 
 #dropdown {
@@ -40,6 +53,11 @@ h4 {
     width: 65%;
     display: inline-block;
     justify-content: left;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 4px 15px 0 rgba(0, 0, 0, 0.09)
+}
+
+.Select.is-focused:not(.is-open) > .Select-control {
+    border: none;
 }
 
 #dropdown_text {
@@ -71,27 +89,43 @@ h4 {
     align-items: flex-start;
 }
 
+#model_input_col {
+    flex-direction: column;
+    justify-content: center;
+}
+
+#perimeter_input, #perimeter_button {
+    height: 30px;
+    width: 80%;
+    margin: 0px;
+    padding: 0px;
+}
+
 #perimeter_input {
-    width: 20%;
-    display: inline-block;
     text-align: center;
+    padding: 1px;
+    margin-bottom: 11px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 4px 15px 0 rgba(0, 0, 0, 0.09)
+}
+
+.dash-input::placeholder {
+    font-family: 'Segoe UI';
+    font-size: 14px;
 }
 
 #perimeter_button {
-    width:20%;
-    height: 30px;
-    display: inline-block;
-    margin-left: 2%;
     background-color: #47A992;
     font-size: small;
     font-weight: bold;
     border: 0px;
     border-radius: 6px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 4px 15px 0 rgba(0, 0, 0, 0.09)
 }
+
 #hist_dd, #perimeter_input {
     border: black 2px solid;
     border-radius: 6px;
+    font-family: 'Segoe UI';
 }
 
 #model_p, #diagnosis_p {
@@ -99,13 +133,19 @@ h4 {
     margin: 0px
 }
 
-#diagnosis_p {
+#diagnosis_col {
     display: flex;
-    height: 100%;
-    width: 100%;
     align-items: center;
     justify-content: center;
-    font-size: 35px;
+}
+
+#diagnosis_p {
+    display: flex;
+    height: 80%;
+    width: 80%;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
 }
 
 .column-header-name, .dash-cell-value, .dash-filter {
